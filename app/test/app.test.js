@@ -68,6 +68,23 @@ describe('todo-app API', () => {
     assert.strictEqual(tasks[0].title, 'Terreau des tomates');
   });
 
+  test('GET /api/tasks/:id returns a single task', async () => {
+    const created = await (await fetch(`${server.base}/api/tasks`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: 'Tache unique' }),
+    })).json();
+
+    const res = await fetch(`${server.base}/api/tasks/${created.id}`);
+    assert.strictEqual(res.status, 200);
+    const task = await res.json();
+    assert.strictEqual(task.id, created.id);
+    assert.strictEqual(task.title, 'Tache unique');
+
+    const missing = await fetch(`${server.base}/api/tasks/9999`);
+    assert.strictEqual(missing.status, 404);
+  });
+
   test('DELETE /api/tasks/:id removes a task', async () => {
     const created = await (await fetch(`${server.base}/api/tasks`, {
       method: 'POST',

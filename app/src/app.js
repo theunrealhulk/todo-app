@@ -29,6 +29,22 @@ function createApp(repo) {
     }
   });
 
+  app.get('/api/tasks/:id', async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      if (!Number.isInteger(id)) {
+        return res.status(400).json({ error: 'invalid id' });
+      }
+      const task = await repo.getById(id);
+      if (!task) {
+        return res.status(404).json({ error: 'task not found' });
+      }
+      res.json(task);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
   app.delete('/api/tasks/:id', async (req, res) => {
     try {
       const id = Number(req.params.id);
