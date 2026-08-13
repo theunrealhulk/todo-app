@@ -1,0 +1,51 @@
+Projet en DevOps et Intégration Continue
+
+Nom du projet :
+"Déploiement Automatisé d'une Application Web de Gestion des Tâches"
+
+Contexte du projet :
+Votre client vous confie le déploiement complet et automatisé d’une application web
+de gestion de tâches (type Trello minimaliste) dans un environnement cloud (local ou
+sur une plateforme cloud publique). L’objectif est de mettre en place toute
+l’infrastructure, le pipeline CI/CD et le déploiement de l’application sur Kubernetes,
+avec une approche DevOps complète.
+
+Livrables attendus :
+1. Infrastructure as Code (Ansible ou Terraform)
+• Un script Ansible ou Terraform qui :
+o Provisionne 2 VM (une pour Jenkins, une pour Kubernetes)
+o Installe Docker, Git, Kubernetes (minikube ou kubeadm), et les prérequis
+sur les machines
+o Configure une base de données (ex. PostgreSQL) et un serveur web (ex.
+NGINX ou Apache)
+
+2. Application Web
+• Une petite application en Node.js / Java / Python Flask (simple TODO list)
+• Code source versionné sur GitHub ou GitLab
+3. Pipeline CI/CD avec Jenkins
+• Un pipeline Jenkins qui :
+o Clone le dépôt
+o Lance des tests unitaires
+o Build l’image Docker
+o Push l’image vers DockerHub
+o Déploie automatiquement sur le cluster Kubernetes via kubectl
+
+4. Configuration Git
+• Un dépôt Git avec :
+o Une structure claire (README, .gitignore, arborescence)
+
+o Utilisation de branches (main, dev)
+o Une pull request simulée avec validation
+
+5. Déploiement Kubernetes
+• Des fichiers YAML pour :
+o Le déploiement de l’application
+o Le service d’exposition (NodePort ou LoadBalancer)
+o Le volume persistant pour la base de données
+o Un secret pour la configuration sensible
+
+Objectifs pédagogiques évalués :
+• Maîtriser les concepts d’Infrastructure as Code (IaC)
+• Mettre en œuvre un pipeline CI/CD avec Jenkins
+• Gérer un projet en Git avec bonnes pratiques
+• Déployer et orchestrer une application sur Kubernetes

@@ -1,0 +1,73 @@
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+        disableConcurrentBuilds()
+    }
+
+    environment {
+        REGISTRY = env.DOCKER_REGISTRY ?: 'VOTRE_UTILISATEUR_DOCKERHUB/todo-app'
+        APP_DIR  = 'app'
+        K8S_DIR  = 'k8s'
+    }
+
+    stages {
+        stage('Clone du depot') {
+            steps {
+                echo 'Le depot est clone automatiquement par la configuration SCM.'
+            }
+        }
+
+        stage('Tests unitaires') {
+            steps {
+                sh "cd ${APP_DIR} && npm ci && npm test"
+            }
+        }
+
+        stage('Build de l image Docker') {
+            steps {
+                sh "cd ${APP_DIR} && docker build -t \${REGISTRY}:\${BUILD_NUMBER} ."
+            }
+        }
+
+        stage('Push vers DockerHub') {
+            when {
+                branch 'main'
+            }
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-credentials',
+                        usernameVariable: 'DOCKERHUB_USER',
+                        passwordVariable: 'DOCKERHUB_PASS'
+                    )
+                ]) {
+                    sh 'echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin'
+                    sh 'docker push ${REGISTRY}:${BUILD_NUMBER}'
+                }
+            }
+        }
+
+        stage('Deploiement Kubernetes') {
+            when {
+                branch 'main'
+            }
+            steps {
+                sh 'kubectl apply -f k8s/ --recursive'
+                sh 'kubectl set image deployment/todo-app todo-app=${REGISTRY}:${BUILD_NUMBER} -n todo'
+                sh 'kubectl rollout status deployment/todo-app -n todo --timeout=180s'
+                sh 'kubectl get pods,svc,pvc -n todo'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline termine avec succes.'
+        }
+        failure {
+            echo 'Pipeline en echec, voir les logs.'
+        }
+    }
+}

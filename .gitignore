@@ -1,0 +1,22 @@
+# Dependances
+node_modules/
+*.log
+
+# Environnement et secrets
+.env
+kubeconfig/*
+!kubeconfig/.gitkeep
+!kubeconfig/README.md
+
+# Volumes locaux
+jenkins_home/
+pgdata/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Artefacts de build
+*.tgz
+*.tmp
