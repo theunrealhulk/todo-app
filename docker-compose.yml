@@ -45,15 +45,16 @@ services:
     build: ./jenkins
     container_name: todo-jenkins
     privileged: true
+    # Host networking: required so Jenkins can reach minikube's API server
+    # (minikube --driver=docker listens on 192.168.49.2, unreachable from
+    # the compose bridge network). Jenkins UI stays on http://localhost:8080.
+    network_mode: host
     environment:
       KUBECONFIG: /kubeconfig/config
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - jenkins_home:/var/jenkins_home
       - ./kubeconfig:/kubeconfig:ro
-    ports:
-      - "8080:8080"
-      - "50000:50000"
 
 volumes:
   pgdata:

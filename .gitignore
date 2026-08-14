@@ -20,3 +20,4 @@ pgdata/
 # Artefacts de build
 *.tgz
 *.tmp
+.jenkins-admin-password

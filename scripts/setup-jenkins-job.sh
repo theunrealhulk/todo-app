@@ -19,18 +19,28 @@ JENKINS_PASS="${JENKINS_PASS:-$(docker exec todo-jenkins cat /var/jenkins_home/s
 
 JOB_XML="jenkins/jobs/pipeline-job.xml"
 JOB_NAME="todo-app-pipeline"
+JAR="$(mktemp)"
 
-if [ ! -f "$JOB_XML" ]; then
-  echo "Erreur : $JOB_XML introuvable. Lancez depuis la racine du projet."
+cleanup() { rm -f "${JAR}"; }
+trap cleanup EXIT
+
+if [ ! -f "${JOB_XML}" ]; then
+  echo "Erreur : ${JOB_XML} introuvable. Lancez depuis la racine du projet."
   exit 1
 fi
 
+AUTH="${JENKINS_USER}:${JENKINS_PASS}"
+
 echo "Creation du job '${JOB_NAME}' sur ${JENKINS_URL} ..."
 
-curl -sS -o /dev/null -w "HTTP %{http_code}\n" \
-  -u "${JENKINS_USER}:${JENKINS_PASS}" \
+CRUMB=$(curl -s -c "${JAR}" -u "${AUTH}" "${JENKINS_URL}/crumbIssuer/api/json" \
+        | sed 's/.*"crumb":"\([^"]*\)".*/\1/')
+
+curl -sS -b "${JAR}" -u "${AUTH}" \
+  -H "Jenkins-Crumb: ${CRUMB}" \
   -H "Content-Type: application/xml" \
   --data-binary "@${JOB_XML}" \
+  -o /dev/null -w "HTTP %{http_code}\n" \
   "${JENKINS_URL}/createItem?name=${JOB_NAME}"
 
 echo "Termine. Rendez-vous sur ${JENKINS_URL}/job/${JOB_NAME}"
