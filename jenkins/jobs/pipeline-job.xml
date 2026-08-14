@@ -6,7 +6,7 @@
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/VOTRE_UTILISATEUR/todo-app.git</url>
+          <url>https://github.com/theunrealhulk/todo-app.git</url>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>
