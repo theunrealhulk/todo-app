@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: todo-app
-          image: VOTRE_UTILISATEUR_DOCKERHUB/todo-app:latest
+          image: theunrealhulk/todo-app:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
