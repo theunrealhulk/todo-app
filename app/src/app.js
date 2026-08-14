@@ -1,8 +1,10 @@
 const express = require('express');
+const path = require('path');
 
 function createApp(repo) {
   const app = express();
   app.use(express.json());
+  app.use(express.static(path.join(__dirname, 'public')));
 
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok' });
@@ -24,6 +26,22 @@ function createApp(repo) {
       }
       const task = await repo.create(title);
       res.status(201).json(task);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.get('/api/tasks/:id', async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      if (!Number.isInteger(id)) {
+        return res.status(400).json({ error: 'invalid id' });
+      }
+      const task = await repo.getById(id);
+      if (!task) {
+        return res.status(404).json({ error: 'task not found' });
+      }
+      res.json(task);
     } catch (err) {
       res.status(500).json({ error: err.message });
     }

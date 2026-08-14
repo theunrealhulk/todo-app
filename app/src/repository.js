@@ -25,6 +25,14 @@ class PostgresRepository {
     );
     return rowCount > 0;
   }
+
+  async getById(id) {
+    const { rows } = await this.pool.query(
+      'SELECT id, title, status, created_at FROM tasks WHERE id = $1',
+      [id]
+    );
+    return rows[0] || null;
+  }
 }
 
 class MemoryRepository {
@@ -48,6 +56,11 @@ class MemoryRepository {
     if (index === -1) return false;
     this.tasks.splice(index, 1);
     return true;
+  }
+
+  async getById(id) {
+    const task = this.tasks.find((t) => t.id === id);
+    return task ? { ...task } : null;
   }
 }
 
