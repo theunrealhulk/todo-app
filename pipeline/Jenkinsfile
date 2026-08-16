@@ -32,9 +32,6 @@ pipeline {
         }
 
         stage('Push vers DockerHub') {
-            when {
-                branch 'main'
-            }
             steps {
                 withCredentials([
                     usernamePassword(
@@ -50,9 +47,6 @@ pipeline {
         }
 
         stage('Deploiement Kubernetes') {
-            when {
-                branch 'main'
-            }
             steps {
                 sh 'kubectl apply -f k8s/ --recursive'
                 sh 'kubectl set image deployment/todo-app todo-app=${REGISTRY}:${BUILD_NUMBER} -n todo'
