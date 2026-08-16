@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        REGISTRY = env.DOCKER_REGISTRY ?: 'theunrealhulk/todo-app'
+        REGISTRY = 'theunrealhulk/todo-app'
         APP_DIR  = 'app'
         K8S_DIR  = 'k8s'
     }
